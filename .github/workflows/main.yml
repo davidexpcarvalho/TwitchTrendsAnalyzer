@@ -1,8 +1,9 @@
 name: Run TwitchTrendsAnalyzer Bot
 
-on:
+on: 
   schedule:
-    - cron:  '0 0 * * *'  # Isso executa todos os dias à meia-noite.
+    - cron: '0 0 * * *'  # Isso executa todos os dias à meia-noite.
+  workflow_dispatch:  # Isso permite a execução manual através do GitHub UI.
 
 jobs:
   build:
