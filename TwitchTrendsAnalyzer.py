@@ -25,7 +25,9 @@ def fetch_twitch_data(url):
         try:
             driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
             driver.get(url)
-            wait = WebDriverWait(driver, 30)  
+            wait = WebDriverWait(driver, 30)
+            # Tira um screenshot para debug
+            driver.save_screenshot("screenshot.png")
             game_elements = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'tr')))
             print(f"Found {len(game_elements)} 'tr' elements")
         except Exception as e:
