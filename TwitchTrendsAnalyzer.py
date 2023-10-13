@@ -13,7 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 # Set locale to Portuguese to format the currency correctly
 locale.setlocale(locale.LC_MONETARY, 'pt_BR.UTF-8')
 
-def fetch_twitch_data("https://streamscharts.com/trends/games"):
+def fetch_twitch_data(url):
     chrome_options = Options()
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
@@ -24,11 +24,9 @@ def fetch_twitch_data("https://streamscharts.com/trends/games"):
     while driver is None and attempts < 3:
         try:
             driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
-            driver.get("https://streamscharts.com/trends/games")
-            wait = WebDriverWait(driver, 30)  # Esperar até 30 segundos
-            game_elements = wait.until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'tr'))
-            )
+            driver.get(url)
+            wait = WebDriverWait(driver, 30)  
+            game_elements = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'tr')))
             print(f"Found {len(game_elements)} 'tr' elements")
         except Exception as e:
             print(f"An error occurred: {str(e)}. Retrying...")
@@ -72,11 +70,9 @@ def load_from_txt(filepath='games_data.txt'):
 
 def update_game_data(new_data, filepath='games_data.txt'):
     existing_data = load_from_txt(filepath)
-    
     merged_data = pd.merge(new_data, existing_data, on='Game Title', how='left')
     old_games = existing_data[~existing_data['Game Title'].isin(merged_data['Game Title'])]
     updated_data = pd.concat([merged_data, old_games], ignore_index=True)
-    
     save_to_txt(updated_data, filepath)
     return updated_data
 
@@ -107,11 +103,9 @@ def fetch_steam_price(app_id):
 
 def send_to_discord(data, webhook_url):
     message = "```"
-    
     for index, row in data.iterrows():
         line = f"{row['Game Title']} - {row['Steam AppID']} - {row['Price']}\n"
         message += line
-    
     message += "```"
     
     payload = {"content": message}
