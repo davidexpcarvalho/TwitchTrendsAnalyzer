@@ -13,7 +13,6 @@ locale.setlocale(locale.LC_MONETARY, 'pt_BR.UTF-8')
 
 def fetch_twitch_data(url):
     chrome_options = Options()
-    chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
     
