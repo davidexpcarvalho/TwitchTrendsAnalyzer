@@ -20,21 +20,17 @@ jobs:
         
     - name: Install dependencies
       run: |
+        sudo apt-get install -y wget unzip xvfb libxi6 libgconf-2-4 gnupg2 libnss3 chromium-chromedriver locales
         python -m pip install --upgrade pip
         pip install selenium pandas requests webdriver_manager
 
-    - name: Setup ChromeDriver
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y wget unzip xvfb libxi6 libgconf-2-4 gnupg2 libnss3 chromium-chromedriver
-        sudo chown root:root /usr/bin/chromedriver
-        sudo chmod +x /usr/bin/chromedriver
-
     - name: Setup Locale
       run: |
-        sudo apt-get install -y locales
         sudo locale-gen pt_BR.UTF-8
         sudo update-locale LANG=pt_BR.UTF-8
-        
+
     - name: Run the script
-      run: python3 TwitchTrendsAnalyzer.py
+      run: |
+        export DISPLAY=:99  # Use a display number of your choosing
+        Xvfb :99 -screen 0 1280x1024x24 &
+        python3 TwitchTrendsAnalyzer.py
