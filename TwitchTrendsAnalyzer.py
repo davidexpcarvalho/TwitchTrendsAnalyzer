@@ -10,7 +10,7 @@ locale.setlocale(locale.LC_MONETARY, 'pt_BR.UTF-8')
 def fetch_twitch_data(url):
     # Adicione o path do seu webdriver se necessário
     from selenium.webdriver.common.by import By
-     from selenium import webdriver
+    from selenium import webdriver
     from selenium.webdriver.chrome.service import Service as ChromeService
     from webdriver_manager.chrome import ChromeDriverManager
 
