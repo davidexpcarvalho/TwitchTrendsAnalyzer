@@ -12,6 +12,7 @@ def fetch_twitch_data(url):
     from selenium.webdriver.chrome.service import Service as ChromeService
     from selenium.webdriver.chrome.options import Options
     from webdriver_manager.chrome import ChromeDriverManager
+    from selenium.webdriver.common.by import By
 
     chrome_options = Options()
     chrome_options.add_argument("--headless")
