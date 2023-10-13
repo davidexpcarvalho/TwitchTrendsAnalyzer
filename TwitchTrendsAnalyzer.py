@@ -2,24 +2,28 @@ import requests
 import pandas as pd
 import time
 import locale
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 
 # Set locale to Portuguese to format the currency correctly
 locale.setlocale(locale.LC_MONETARY, 'pt_BR.UTF-8')
 
-# Fetch Twitch data
 def fetch_twitch_data(url):
-    from selenium import webdriver
-    from selenium.webdriver.chrome.service import Service as ChromeService
-    from webdriver_manager.chrome import ChromeDriverManager
-    from selenium.webdriver.common.by import By
-
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--no-sandbox")
+    
     driver = None
     attempts = 0
     
     while driver is None and attempts < 3:
         try:
-            driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
-            driver.get(url)
+            driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
+            driver.get(""https://streamscharts.com/trends/games"")
             time.sleep(5)
         except Exception as e:
             print(f"An error occurred: {str(e)}. Retrying...")
@@ -45,13 +49,11 @@ def fetch_twitch_data(url):
     
     return pd.DataFrame(data)
 
-# Save data to .txt file
 def save_to_txt(data, filepath='games_data.txt'):
     with open(filepath, 'w', encoding='utf-8') as file:
         for index, row in data.iterrows():
             file.write(f"{row['Game Title']}, {row.get('Steam AppID', '')}\n")
 
-# Load data from .txt file
 def load_from_txt(filepath='games_data.txt'):
     data = []
     try:
@@ -63,7 +65,6 @@ def load_from_txt(filepath='games_data.txt'):
     except FileNotFoundError:
         return pd.DataFrame(columns=['Game Title', 'Steam AppID'])
 
-# Update game data
 def update_game_data(new_data, filepath='games_data.txt'):
     existing_data = load_from_txt(filepath)
     
@@ -74,7 +75,6 @@ def update_game_data(new_data, filepath='games_data.txt'):
     save_to_txt(updated_data, filepath)
     return updated_data
 
-# Fetch Steam price
 def fetch_steam_price(app_id):
     if pd.isna(app_id) or app_id == 'nan':
         return "Não distribuído pela Steam ou Código desatualizado"
@@ -100,7 +100,6 @@ def fetch_steam_price(app_id):
     
     return price
 
-# Send data to Discord
 def send_to_discord(data, webhook_url):
     message = "```"
     
@@ -125,10 +124,10 @@ twitch_url = "https://streamscharts.com/trends/games"
 twitch_data = fetch_twitch_data(twitch_url)
 
 # Step 2: Update game data with existing data
-updated_data = update_game_data(twitch_data)
+if twitch_data is not None and not twitch_data.empty:
+    updated_data = update_game_data(twitch_data)
 
-# Step 3: Fetch prices from Steam API
-if updated_data is not None and not updated_data.empty:
+    # Step 3: Fetch prices from Steam API
     prices = []
     for _, row in updated_data.iterrows():
         app_id = row['Steam AppID']
@@ -137,7 +136,7 @@ if updated_data is not None and not updated_data.empty:
     
     updated_data['Price'] = prices
     
-    # Substitua YOUR_WEBHOOK_URL pelo URL real do seu webhook.
+    # Replace YOUR_WEBHOOK_URL with your actual webhook URL.
     YOUR_WEBHOOK_URL = "https://discord.com/api/webhooks/1162473309770887309/MmzFWifVrshcZcdZZeJIF79TYKU0oQsIr1jpYxDUtufBF2SyaiZvSZYtO3fBdT2WjVgR"
     send_to_discord(updated_data, YOUR_WEBHOOK_URL)
 else:
