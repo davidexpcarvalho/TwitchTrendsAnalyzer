@@ -29,6 +29,12 @@ jobs:
         sudo apt-get install -y wget unzip xvfb libxi6 libgconf-2-4 gnupg2 libnss3 chromium-chromedriver
         sudo chown root:root /usr/bin/chromedriver
         sudo chmod +x /usr/bin/chromedriver
+
+    - name: Setup Locale
+      run: |
+        sudo apt-get install -y locales
+        sudo locale-gen pt_BR.UTF-8
+        sudo update-locale LANG=pt_BR.UTF-8
         
     - name: Run the script
       run: python3 TwitchTrendsAnalyzer.py
