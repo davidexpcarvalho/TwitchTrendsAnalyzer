@@ -10,15 +10,8 @@ locale.setlocale(locale.LC_MONETARY, 'pt_BR.UTF-8')
 def fetch_twitch_data(url):
     from selenium import webdriver
     from selenium.webdriver.chrome.service import Service as ChromeService
-    from selenium.webdriver.chrome.options import Options
     from webdriver_manager.chrome import ChromeDriverManager
     from selenium.webdriver.common.by import By
-
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
 
     driver = None
     attempts = 0
