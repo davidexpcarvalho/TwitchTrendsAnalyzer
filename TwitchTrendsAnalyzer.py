@@ -7,11 +7,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 # Set locale to Portuguese to format the currency correctly
 locale.setlocale(locale.LC_MONETARY, 'pt_BR.UTF-8')
 
-def fetch_twitch_data(url):
+def fetch_twitch_data("https://streamscharts.com/trends/games"):
     chrome_options = Options()
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
@@ -23,7 +25,11 @@ def fetch_twitch_data(url):
         try:
             driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
             driver.get("https://streamscharts.com/trends/games")
-            time.sleep(30)
+            wait = WebDriverWait(driver, 30)  # Esperar até 30 segundos
+            game_elements = wait.until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'tr'))
+            )
+            print(f"Found {len(game_elements)} 'tr' elements")
         except Exception as e:
             print(f"An error occurred: {str(e)}. Retrying...")
             attempts += 1
