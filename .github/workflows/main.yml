@@ -23,20 +23,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install selenium pandas requests
 
-    - name: Install Chrome
+    - name: Setup ChromeDriver
       run: |
         sudo apt-get update
-        sudo apt-get install -yq --no-install-recommends \
-          wget \
-          gnupg2 \
-          unzip \
-          xvfb \
-          libxi6 \
-          libgconf-2-4 \
-          libnss3 \
-          chromium-chromedriver
-        sudo mv /usr/lib/chromium-browser/chromedriver /usr/bin/
-        export PATH=$PATH:/usr/bin/chromedriver
+        sudo apt-get install -y wget unzip xvfb libxi6 libgconf-2-4 gnupg2 libnss3 chromium-chromedriver
+        sudo mv /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
+        sudo chown root:root /usr/bin/chromedriver
+        sudo chmod +x /usr/bin/chromedriver
         
     - name: Run the script
       run: python3 TwitchTrendsAnalyzer.py
