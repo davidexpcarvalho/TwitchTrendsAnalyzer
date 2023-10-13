@@ -11,7 +11,8 @@ def fetch_twitch_data(url):
     # Adicione o path do seu webdriver se necessário
     from selenium import webdriver
     from selenium.webdriver.common.by import By
-    driver = webdriver.Chrome()
+    from webdriver_manager.chrome import ChromeDriverManager
+    driver = webdriver.Chrome(ChromeDriverManager().install())
     driver.get(url)
     time.sleep(5)
     
