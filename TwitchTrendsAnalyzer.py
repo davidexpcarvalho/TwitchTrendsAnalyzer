@@ -8,16 +8,33 @@ locale.setlocale(locale.LC_MONETARY, 'pt_BR.UTF-8')
 
 # Fetch Twitch data
 def fetch_twitch_data(url):
-    # Adicione o path do seu webdriver se necessário
-    from selenium.webdriver.common.by import By
     from selenium import webdriver
     from selenium.webdriver.chrome.service import Service as ChromeService
+    from selenium.webdriver.chrome.options import Options
     from webdriver_manager.chrome import ChromeDriverManager
 
-    driver = webdriver.Chrome( service=ChromeService(ChromeDriverManager().install()))
-    driver.get("https://streamscharts.com/trends/games")
-    time.sleep(5)
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+
+    driver = None
+    attempts = 0
     
+    while driver is None and attempts < 3:
+        try:
+            driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
+            driver.get(url)
+            time.sleep(5)
+        except Exception as e:
+            print(f"An error occurred: {str(e)}. Retrying...")
+            attempts += 1
+    
+    if driver is None:
+        print("Failed to create a Chrome instance after 3 attempts.")
+        return None
+        
     data = []
     try:
         game_elements = driver.find_elements(By.CSS_SELECTOR, 'tr')
