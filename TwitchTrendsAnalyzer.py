@@ -23,7 +23,7 @@ def fetch_twitch_data(url):
     while driver is None and attempts < 3:
         try:
             driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
-            driver.get(""https://streamscharts.com/trends/games"")
+            driver.get("https://streamscharts.com/trends/games")
             time.sleep(5)
         except Exception as e:
             print(f"An error occurred: {str(e)}. Retrying...")
