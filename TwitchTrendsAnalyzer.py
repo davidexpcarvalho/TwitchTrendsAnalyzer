@@ -14,7 +14,8 @@ def fetch_twitch_data(url):
     from selenium.webdriver.chrome.service import Service as ChromeService
     from webdriver_manager.chrome import ChromeDriverManager
 
-    driver = webdriver.Chrome(url="https://streamscharts.com/trends/games", service=ChromeService(ChromeDriverManager().install()))
+    driver = webdriver.Chrome( service=ChromeService(ChromeDriverManager().install()))
+    driver.get("https://streamscharts.com/trends/games")
     time.sleep(5)
     
     data = []
