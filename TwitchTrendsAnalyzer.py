@@ -11,16 +11,7 @@ def fetch_twitch_data(url):
     # Adicione o path do seu webdriver se necessário
     from selenium import webdriver
     from selenium.webdriver.common.by import By
-    from selenium.webdriver import Options
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("start-maximized")
-    chrome_options.add_argument("disable-infobars")
-    chrome_options.add_argument("--disable-extensions")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    driver = webdriver.Chrome(options=chrome_options)
+    driver = webdriver.Chrome()
     driver.get(url)
     time.sleep(5)
     
